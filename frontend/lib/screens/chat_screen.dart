@@ -110,6 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (result['success']) {
       // Send via Socket.io for real-time delivery
+      // Message will appear only once when it comes back through socket
       final roomId = [currentUserId, widget.receiverId!].toList()..sort();
       socketService.sendMessage(
         currentUserId,
@@ -117,18 +118,6 @@ class _ChatScreenState extends State<ChatScreen> {
         message,
         roomId.join('_'),
       );
-
-      // Add to local UI
-      setState(() {
-        messages.add({
-          '_id': DateTime.now().toString(),
-          'senderId': {'_id': currentUserId},
-          'receiverId': {'_id': widget.receiverId},
-          'message': message,
-          'createdAt': DateTime.now().toIso8601String(),
-        });
-      });
-      _scrollToBottom();
     }
   }
 
