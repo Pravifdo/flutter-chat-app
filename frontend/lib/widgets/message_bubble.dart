@@ -4,20 +4,30 @@ class MessageBubble extends StatelessWidget {
   final String text;
   final bool isMe;
 
-  MessageBubble({required this.text, required this.isMe});
+  const MessageBubble({Key? key, required this.text, required this.isMe})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         decoration: BoxDecoration(
-          color: isMe ? Colors.green[200] : Colors.grey[300],
+          color: isMe ? Colors.blue[500] : Colors.grey[300],
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Text(text),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isMe ? Colors.white : Colors.black87,
+            fontSize: 14,
+          ),
+        ),
       ),
     );
   }
