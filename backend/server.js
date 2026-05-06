@@ -55,15 +55,15 @@ io.on("connection", (socket) => {
   // Send message via socket
   socket.on("sendMessage", ({senderId, receiverId, message, roomId}) => {
     const data = {
-      senderId,
-      receiverId,
+      senderId: { _id: senderId },
+      receiverId: { _id: receiverId },
       message,
-      timestamp: new Date()
+      createdAt: new Date().toISOString()
     };
     
-    // Send to specific room (1-on-1 chat)
+    // Send to all users in the room (including sender)
     io.to(roomId).emit("receiveMessage", data);
-    console.log(`Message from ${senderId} to ${receiverId}`);
+    console.log(`Message from ${senderId} to ${receiverId} in room ${roomId}`);
   });
 
   // User disconnects
