@@ -1,7 +1,7 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
-  late IO.Socket socket;
+  IO.Socket? socket;
   bool isConnected = false;
 
   void connect(
@@ -18,39 +18,39 @@ class SocketService {
           .build(),
     );
 
-    socket.onConnect((_) {
+    socket?.onConnect((_) {
       isConnected = true;
       print('Socket connected');
       // Notify server that user is online
-      socket.emit("userJoined", userId);
+      socket?.emit("userJoined", userId);
     });
 
-    socket.on("receiveMessage", (data) {
+    socket?.on("receiveMessage", (data) {
       print('Message received: $data');
       onMessageReceived(Map<String, dynamic>.from(data));
     });
 
-    socket.on("userOnline", (userId) {
+    socket?.on("userOnline", (userId) {
       print('User online: $userId');
       onUserOnline(userId);
     });
 
-    socket.on("userOffline", (userId) {
+    socket?.on("userOffline", (userId) {
       print('User offline: $userId');
       onUserOffline(userId);
     });
 
-    socket.onDisconnect((_) {
+    socket?.onDisconnect((_) {
       isConnected = false;
       print('Socket disconnected');
     });
 
-    socket.connect();
+    socket?.connect();
   }
 
   void joinRoom(String roomId) {
     if (isConnected) {
-      socket.emit("joinRoom", roomId);
+      socket?.emit("joinRoom", roomId);
       print('Joined room: $roomId');
     }
   }
@@ -62,7 +62,7 @@ class SocketService {
     String roomId,
   ) {
     if (isConnected) {
-      socket.emit("sendMessage", {
+      socket?.emit("sendMessage", {
         "senderId": senderId,
         "receiverId": receiverId,
         "message": message,
@@ -73,7 +73,9 @@ class SocketService {
   }
 
   void disconnect() {
-    socket.disconnect();
+    if (socket != null) {
+      socket?.disconnect();
+    }
     isConnected = false;
   }
 }

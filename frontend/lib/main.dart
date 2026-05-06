@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chat App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
@@ -46,9 +47,6 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
-  bool _isLoggedIn = false;
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
@@ -59,29 +57,17 @@ class _AuthWrapperState extends State<AuthWrapper> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    setState(() {
-      _isLoggedIn = token != null;
-      _isLoading = false;
-    });
+    if (token != null && mounted) {
+      Navigator.pushReplacementNamed(context, '/chat');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(child: CircularProgressIndicator(color: Colors.blue[700])),
-      );
-    }
-
-    if (_isLoggedIn) {
-      return const ChatScreen();
-    } else {
-      return LoginScreen(
-        onLoginSuccess: () {
-          setState(() => _isLoggedIn = true);
-          Navigator.pushReplacementNamed(context, '/chat');
-        },
-      );
-    }
+    return LoginScreen(
+      onLoginSuccess: () {
+        Navigator.pushReplacementNamed(context, '/chat');
+      },
+    );
   }
 }

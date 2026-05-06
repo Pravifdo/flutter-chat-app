@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
 import '../services/socket_service.dart';
 import '../widgets/message_bubble.dart';
+import 'login_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final String? receiverId;
@@ -153,7 +154,16 @@ class _ChatScreenState extends State<ChatScreen> {
     socketService.disconnect();
     await ApiService.clearAuth();
     if (mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(
+            onLoginSuccess: () {
+              Navigator.pushReplacementNamed(context, '/chat');
+            },
+          ),
+        ),
+        (route) => false,
+      );
     }
   }
 
@@ -172,6 +182,9 @@ class _ChatScreenState extends State<ChatScreen> {
           backgroundColor: Colors.blue[700],
           title: Text(widget.receiverName ?? 'Chat'),
           elevation: 0,
+          actions: [
+            IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
+          ],
         ),
         body: Column(
           children: [
